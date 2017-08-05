@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CustomComponent</string>
+    <string name="popwindow">hello popwindow</string>
+</resources>
