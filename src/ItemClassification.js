@@ -13,18 +13,17 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-export default class ItemClassification extends Component {
-    render() {
-        const {label, onPress} = this.props;
-        return (
-            <TouchableOpacity
-                style={styles.root}
-                onPress={onPress}>
-                <Text style={styles.title}>{label}</Text>
-            </TouchableOpacity>
-        );
-    }
-}
+const itemClassification = (props) => {
+
+    const {label, onPress} = props;
+    return (
+        <TouchableOpacity
+            style={styles.root}
+            onPress={onPress}>
+            <Text style={styles.title}>{label}</Text>
+        </TouchableOpacity>
+    );
+};
 const styles = StyleSheet.create({
     root: {
         justifyContent: 'center',
@@ -39,3 +38,5 @@ const styles = StyleSheet.create({
         fontSize: 26,
     }
 });
+
+export  default itemClassification;

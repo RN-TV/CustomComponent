@@ -20,16 +20,22 @@ import {
     TouchableOpacity,
     TouchableHighlight,
     DeviceEventEmitter,
+    ImageBackground,
 } from 'react-native';
 import{
     StackNavigator,
 }from 'react-navigation';
+import {
+    MyIntentModule,
+    ToastNative,
+    DataModule,
+    SplashScreen,
+} from './utils/NativeModules';
 import StatusBar from './StatusBar';
 import Footer from './Footer';
 import VodContent from './VodContent';
 import AppContent from './AppContent';
 import TvContent from './TvContent';
-import ToastNative from './utils/NativeModules';
 import Item from './Item';
 import movies from '../assests/movies.json';
 
@@ -56,7 +62,7 @@ export default class App extends Component {
                 offset: 0,
             },
             focus: false,
-            fristRender: false,
+            fristRender: true,
         };
         this.completeRender = false;
     }
@@ -184,12 +190,12 @@ export default class App extends Component {
                                  <View>
                                  <VodContent navigation={navigate}
                                  onPress={() => {
-                                 navigate('Details', {user: 'VOD'});
+                                 navigate('Details', {screen: 'VOD'});
                                  }}/>
                                  </View>*/}
                                 <View>
                                     <AppContent navigation={navigate}
-                                                onPress={() => navigate('Details', {user: 'APP'})}/>
+                                                onPress={() => navigate('Details', {screen: 'APP'})}/>
                                 </View>
                             </ViewPagerAndroid>
 
@@ -214,7 +220,7 @@ export default class App extends Component {
                 :
                 <View style={[styles.flex, styles.root_container]}>
 
-                    <Image source={require("../res/mipmap-mdpi/launcher_bj.png")}>
+                    <ImageBackground source={require("../res/mipmap-mdpi/launcher_bj.png")}>
 
                         <StatusBar
                             ref={(statusBar) => {
@@ -245,12 +251,12 @@ export default class App extends Component {
                                 <View>
                                     <VodContent navigation={navigate}
                                                 onPress={() => {
-                                                    navigate('Details', {user: 'VOD'});
+                                                    navigate('Details', {screen: 'VOD'});
                                                 }}/>
                                 </View>
                                 <View>
                                     <AppContent navigation={navigate}
-                                                onPress={() => navigate('Details', {user: 'APP'})}/>
+                                                onPress={() => navigate('Details', {screen: 'APP'})}/>
                                 </View>
                             </ViewPagerAndroid>
 
@@ -269,7 +275,7 @@ export default class App extends Component {
                                 selected={this.state.selectedPoint}
                                 index={this.state.page}/>
 
-                    </Image>
+                    </ImageBackground>
 
                 </View>
         );
@@ -282,6 +288,9 @@ export default class App extends Component {
         let fristRender = false;
         this.setState({fristRender: fristRender});
         // DeviceEventEmitter.emit('userNameDidChange', '通知来了');
+        setTimeout(() => {
+            SplashScreen.hide();
+        }, 1000)
     }
 
     componentWillReceiveProps() {

@@ -29,23 +29,33 @@ export default class StatusBar extends Component {
 
     constructor(props) {
         super(props);
-        const networkState = NetworkUtil.checkNetworkState();
-        console.log(TAG + "networkState=" + networkState);
     }
 
-    state = {
+     state = {
         date: new Date().toLocaleTimeString(),
+        isConnected: null,
+        connectionInfo: null,
     };
 
-    handleConnectivityChange(status) {
-        console.log(TAG + 'status change:' + status);
+    handleConnectivityChange(isConnected) {
+        console.log(TAG + 'isConnected:' + isConnected);
         //监听第一次改变后, 可以取消监听.或者在componentUnmount中取消监听
         // NetInfo.removeEventListener('change', this.handleConnectivityChange);
     }
 
+    handleNetStatusChange = (status) => {
+        // ToastAndroid.show('当然网络状态：' + status, ToastAndroid.SHORT);
+    };
+
 
     componentWillMount() {
-        NetworkUtil.addEventListener(NetworkUtil.TAG_NETWORK_CHANGE, this.handleConnectivityChange)
+        NetworkUtil.addIsConnectedListener(NetworkUtil.TAG_NETWORK_CHANGE, this.handleConnectivityChange);
+        NetworkUtil.checkNetworkState((connectionInfo) => {
+            console.log("connectionInfo=" + connectionInfo);
+        });
+        NetworkUtil.checkNetworkIsConnected((isConnected) => {
+            console.log("isConnect=" + isConnected);
+        });
     }
 
     componentDidMount() {
@@ -61,7 +71,7 @@ export default class StatusBar extends Component {
 
     componentWillUnmount() {
         clearInterval(this.timer);
-        NetworkUtil.removeEventListener(NetworkUtil.TAG_NETWORK_CHANGE, this.handleConnectivityChange)
+        NetworkUtil.removeIsConnectedListener(NetworkUtil.TAG_NETWORK_CHANGE, this.handleConnectivityChange)
     }
 
     onPress = (label) => {
@@ -73,7 +83,9 @@ export default class StatusBar extends Component {
             <View style={styles.status_bar_container}>
                 <View style={styles.status_bar}>
                     <TouchableOpacity style={styles.status_bar_title}
-                    onPress={()=>{ToastNative.show("无法使用此功能",1)}}>
+                                      onPress={() => {
+                                          ToastNative.show("无法使用此功能", 1)
+                                      }}>
                         {/*<Text style={styles.status_bar_text}>
                          正在获取天气信息。。。
                          </Text>*/}
@@ -112,47 +124,47 @@ export default class StatusBar extends Component {
 }
 
 const styles = StyleSheet.create({
-        status_bar_container: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 500,
-        },
-        status_bar: {
-            flex: 1,
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            backgroundColor: '#f4f0ff',
-            flexDirection: 'row',
-            height: 50,
-        },
-        status_bar_title: {
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            flex: 1,
-            paddingLeft: 40,
-        },
-        status_bar_middle: {
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 1,
-            flexDirection: 'row',
-        },
-        status_bar_right: {
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            flex: 1,
-            flexDirection: 'row',
-            paddingRight: 40
-        },
-        status_bar_icon: {
-            width: 50,
-            height: 50,
-            marginHorizontal: 30,
-            resizeMode: 'center',
-        },
-        status_bar_text: {
-            fontSize: 24,
-            textAlign: 'center',
-        },
-    });
+    status_bar_container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 500,
+    },
+    status_bar: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: '#f4f0ff',
+        flexDirection: 'row',
+        height: 50,
+    },
+    status_bar_title: {
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        flex: 1,
+        paddingLeft: 40,
+    },
+    status_bar_middle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'row',
+    },
+    status_bar_right: {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        paddingRight: 40
+    },
+    status_bar_icon: {
+        width: 50,
+        height: 50,
+        marginHorizontal: 30,
+        resizeMode: 'center',
+    },
+    status_bar_text: {
+        fontSize: 24,
+        textAlign: 'center',
+    },
+});

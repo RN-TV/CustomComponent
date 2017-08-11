@@ -1,5 +1,6 @@
 package com.customcomponent;
 
+import com.customcomponent.splash.SplashScreenModule;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -26,6 +27,7 @@ public class MyRectPackage implements ReactPackage {
         nativeModules.add(new MyIntentModule(reactContext));
         mDataModule = new DataModule(reactContext);
         nativeModules.add(mDataModule);
+        nativeModules.add(new SplashScreenModule(reactContext));
         return nativeModules;
     }
 

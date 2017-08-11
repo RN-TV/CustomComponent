@@ -12,7 +12,6 @@ public class LauncherActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RNCacheViewManager.init(this);
 
         TextView textView=new TextView(this);
         textView.setText("click");

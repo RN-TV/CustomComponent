@@ -36,18 +36,22 @@ const list_height = screenHeight * (30 / 100);
 const classsification_height = screenHeight * (10 / 100);
 const ITEM_HEIGHT = 100;
 const TAG = "VodContent:";
-const initViewPosition=0;
-var currentViewPosition=initViewPosition;
-var tagIndex=1;
+const initViewPosition = 0;
+var currentViewPosition = initViewPosition;
+var tagIndex = 1;
 export default class VodContent extends Component {
+
     constructor(props) {
         super(props);
+
     }
+
+    navigate = this.props.navigation;
 
     componentWillMount() {
         console.log(TAG + "componentWillMount");
-        DataModule.getTitleUrl((msg)=>{
-            console.log("msg="+msg);
+        DataModule.getTitleUrl((msg) => {
+            console.log("msg=" + msg);
         })
     }
 
@@ -86,14 +90,14 @@ export default class VodContent extends Component {
     };
 
     render() {
-        const {navigate} = this.props.navigation;
+        // const {navigate} = this.props.navigation;
         return (
             <View style={styles.vod_content}>
                 <View style={styles.recommend}>
 
                     <TouchableHighlight style={styles.preview_video}
                                         onPress={() => this.props.onPress()}
-                                        title="VOD">
+                                        title="VodDetails">
                         <Image
                             source={require('../res/mipmap-mdpi/video_default_bg.png')}/>
                     </TouchableHighlight>
@@ -146,8 +150,14 @@ export default class VodContent extends Component {
                                   keyExtractor={item => item.key}
                                   data={classification.classification_list}
                                   renderItem={({item}) => {
-                                      return (<ItemClassification label={item.title}
-                                                                  onPress={() => this.props.onPress()}/>);
+
+                                      return (
+                                          <ItemClassification
+                                              label={item.title}
+                                              onPress={() => this.navigate('VodList', {
+                                                  screen: item.title,
+                                                  url: item.url
+                                              })}/>);
                                   }
                                   }
                                   initialNumToRender={5}

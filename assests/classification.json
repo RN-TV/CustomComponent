@@ -2,43 +2,53 @@
   "classification_list": [
     {
       "key": "01",
-      "title": "历史与收藏"
+      "title": "历史与收藏",
+      "url": ""
     },
     {
       "key": "02",
-      "title": "华语电影"
+      "title": "华语电影",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/chinesemovie/"
     },
     {
       "key": "03",
-      "title": "海外电影"
+      "title": "海外电影",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/overseas/"
     },
     {
       "key": "04",
-      "title": "电视剧"
+      "title": "电视剧",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/teleplay/"
     },
     {
       "key": "05",
-      "title": "少儿"
+      "title": "少儿",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/comic/"
     },
     {
       "key": "06",
-      "title": "娱乐综艺"
+      "title": "娱乐综艺",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/variety/"
     },
     {
       "key": "07",
-      "title": "视云影院"
+      "title": "视云影院",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/payment/"
     },
     {
       "key": "08",
-      "title": "音乐"
+      "title": "音乐",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/music/"
     },
     {
       "key": "09",
-      "title": "体育"
+      "title": "体育",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/sport/"
     },
     {
       "key": "10",
-      "title": "生活纪实"
+      "title": "生活纪实",
+      "url": "http://cord.tvxio.com/v3_0/I3/fru/api/tv/sections/documentary/"
     }
   ]
 }

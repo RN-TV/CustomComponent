@@ -37,6 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+//        ReactPreLoader.init(this,new ReactInfo("CustomComponent",null));
         SoLoader.init(this, /* native exopackage */ false);
     }
 

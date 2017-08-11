@@ -35,6 +35,7 @@ export default class AppContent extends Component {
         appStoreSubjectUri2: {},
         appStoreSubjectUri2: {}
     };
+    appStoreSubjectUri1;
 
     constructor(props) {
         super(props);
@@ -43,8 +44,8 @@ export default class AppContent extends Component {
             animationsAreEnabled: true,//动画是否开启
         };
         this.appStoreRecommendUri;
-        this.appStoreSubjectUri1;
-        this.appStoreSubjectUri2;
+        this.appStoreSubjectUri1="http://img.lenovomm.com/s3/img/app/app-img-lestore/6733-2017-08-02043725-1501663045154.jpg";
+        this.appStoreSubjectUri2="http://img.lenovomm.com/s3/img/app/app-img-lestore/5304-2017-06-28043821-1498639101734.jpg";
 
 
     }
@@ -67,14 +68,23 @@ export default class AppContent extends Component {
     componentWillMount() {
         console.log(TAG + "componentWillMount");
         startRender = Date.now();
+        //图片预加载
+        var prefetchTask = Image.prefetch('https://facebook.github.io/react/img/logo_og.png');
+        prefetchTask.then(() => {
+            //此处可设置状态，显示Image组件。此时组件会使用预加载的图片信息。而不用再次加载
+            console.log('加载图片成功')
+        }, error => {
+            console.log('加载图片失败')
+        })
         DataModule.getAppScreenImageUrl((msg1, msg2, msg3) => {
             this.appStoreRecommendUri = msg1;
             this.appStoreSubjectUri1 = msg2;
             this.appStoreSubjectUri2 = msg3;
             console.log("appStoreRecommendUri=" + this.appStoreRecommendUri);
-            console.log("msg2=" + msg2);
-            console.log("msg3=" + msg3);
+
         });
+        console.log("appStoreSubjectUri1=" + this.appStoreSubjectUri1);
+        console.log("appStoreSubjectUri2=" + this.appStoreSubjectUri2);
     }
 
     async componentDidMount() {
@@ -85,7 +95,7 @@ export default class AppContent extends Component {
             // this.move(1);
         }, 5000);
         await this.test();
-        this.subscription = DeviceEventEmitter.addListener('hoverEvent', (event) => {
+        /*this.subscription = */DeviceEventEmitter.addListener('hoverEvent', (event) => {
            console.log("enevt="+event.result);
         })
     }
@@ -108,7 +118,7 @@ export default class AppContent extends Component {
     }
     componentWillUnmount(){
         clearInterval(this.timer);
-        this.subscription.remove();
+        // this.subscription.remove();
         console.log(TAG+"componentWillUnmount");
     }
     move(delta) {
@@ -165,7 +175,7 @@ export default class AppContent extends Component {
                         <TouchableHighlight onPress={() => this.props.onPress()}
                                             title="APP">
                             <Image style={styles.topic_image}
-                                   source={{uri: "\'" + this.appStoreSubjectUri2 + "\'"}}>
+                                   source={{uri: this.appStoreSubjectUri2}}>
                </Image>
 
                         </TouchableHighlight>
