@@ -21,6 +21,12 @@ import {
     TouchableHighlight,
     DeviceEventEmitter,
     ImageBackground,
+    Platform,
+    UIManager,
+    LayoutAnimation,
+    Animated,
+    Easing,
+    Modal,
 } from 'react-native';
 import{
     StackNavigator,
@@ -36,7 +42,7 @@ import Footer from './Footer';
 import VodContent from './VodContent';
 import AppContent from './AppContent';
 import TvContent from './TvContent';
-import Item from './Item';
+import Item from './ItemPoster';
 import movies from '../assests/movies.json';
 
 const PAGES = 3;
@@ -63,6 +69,8 @@ export default class App extends Component {
             },
             focus: false,
             fristRender: true,
+
+            anim: new Animated.Value(0)
         };
         this.completeRender = false;
     }
@@ -70,6 +78,9 @@ export default class App extends Component {
     componentWillMount() {
         console.log(TAG + "componentWillMount");
         startRender = Date.now();
+        if (Platform.OS === 'android') {
+            UIManager.setLayoutAnimationEnabledExperimental(true)
+        }
     }
 
     onPageSelected = (e) => {
@@ -93,9 +104,7 @@ export default class App extends Component {
 
     move(delta) {
         let clickStart = Date.now();
-        console.log("clickStart=" + clickStart);
         const number = (clickStart - clickDelay);
-        console.log("number=" + number);
         if (number < 500) {
             return;
         }
@@ -110,7 +119,6 @@ export default class App extends Component {
             this.go(page);
         }
         clickDelay = clickStart;
-        console.log("clickDelay=" + clickDelay)
     }
 
     go(page) {
@@ -123,19 +131,49 @@ export default class App extends Component {
         //调用Footer切换指示器图标的方法。
         this.refs.footer.setSelected(selectedPoint, page);
         //刷新了
+        // this.startAnimation();
+        this.slide();
         this.setState({page, selectedPoint});
     }
+
+    startAnimation() {
+        this.state.currentAlpha = this.state.currentAlpha == 1.0 ? 0.0 : 1.0;
+        Animated.timing(
+            this.state.fadeAnim,
+            {toValue: 1}
+        ).start();
+    }
+
+    slide = () => {
+        /*Animated.spring(this.state.anim, {
+         toValue: 0,
+         velocity: 7,
+         tension: -20,
+         // friction: 3,
+         // speed:12,
+         // bounciness:8,
+         useNativeDriver: true
+         }).start();*/
+        Animated.timing(
+            this.state.anim,
+            {
+                toValue: 1,
+                duration: 2000,
+                easing: Easing.linear
+            }
+        ).start()
+    };
 
     onShowUnderlay = () => {
         // this.state.focus = true;
         // this.setState({focus:true});
-        console.log("this.state.focus=" + this.state.focus);
+        // console.log("this.state.focus=" + this.state.focus);
     };
 
     onHideUnderlay = () => {
         // this.state.focus = false;
         // this.setState({focus:false});
-        console.log("this.state.focus=" + this.state.focus);
+        // console.log("this.state.focus=" + this.state.focus);
     };
 
     onPressIn = () => {
@@ -152,30 +190,28 @@ export default class App extends Component {
     };
 
     render() {
-        let rightIcon = {};
-        this.state.focus ? rightIcon = require("../res/mipmap-mdpi/right_big_arrow.png") : rightIcon = require("../res/mipmap-mdpi/right_small_arrow.png");
         const {navigate} = this.props.navigation;
         return (
-            this.state.fristRender ?
-                <View style={[styles.flex, styles.root_container]}>
+            <View style={[styles.flex, styles.root_container]}>
+                <ImageBackground
+                    source={require("../res/mipmap-mdpi/launcher_bj.png")}>
 
-                    <Image source={require("../res/mipmap-mdpi/launcher_bj.png")}>
+                    <StatusBar
+                        ref={(statusBar) => {
+                            this.statusBar = statusBar
+                        }}
+                        callback={this.callback}/>
 
-                        <StatusBar
-                            ref={(statusBar) => {
-                                this.statusBar = statusBar
-                            }}
-                            callback={this.callback}
-                        />
-
-                        <View style={[styles.content_container]}>
-                            <TouchableOpacity style={styles.button}
-                                              onPress={() => this.move(-1)}
-                                              activeOpacity={0.5}>
-                                <Image style={styles.button_image}
-                                       source={require('../res/mipmap-mdpi/left_big_arrow.png')}/>
-                            </TouchableOpacity>
-
+                    <View style={[styles.content_container]}>
+                        <TouchableOpacity style={styles.left_button}
+                                          onPress={() => this.move(-1)}
+                                          activeOpacity={0.5}>
+                            <Image style={styles.button_image}
+                                   source={require('../res/mipmap-mdpi/left_big_arrow.png')}/>
+                        </TouchableOpacity>
+                        {this.state.fristRender ?
+                            null
+                            :
                             <ViewPagerAndroid style={styles.view_pager}
                                               initialPage={this.state.page}
                                               onPageScroll={() => this.onPageScroll()}
@@ -184,100 +220,42 @@ export default class App extends Component {
                                               ref={(viewPager) => {
                                                   this.viewPager = viewPager;
                                               }}>
-                                {/* <View>
-                                 <TvContent/>
-                                 </View>
-                                 <View>
-                                 <VodContent navigation={navigate}
-                                 onPress={() => {
-                                 navigate('Details', {screen: 'VOD'});
-                                 }}/>
-                                 </View>*/}
-                                <View>
-                                    <AppContent navigation={navigate}
-                                                onPress={() => navigate('Details', {screen: 'APP'})}/>
-                                </View>
-                            </ViewPagerAndroid>
 
-                            <TouchableHighlight style={styles.button}
-                                                onPress={() => this.move(+1)}
-                                                onPressIn={() => this.onPressIn()}
-                                                onPressOut={() => this.onPressOut()}
-                                                onHideUnderlay={() => this.onHideUnderlay()}
-                                                onShowUnderlay={() => this.onShowUnderlay()}
-                                                underlayColor={"#ffffff"}>
-                                <Image style={styles.button_image}
-                                       source={this.state.focus ? require("../res/mipmap-mdpi/right_big_arrow.png") : require("../res/mipmap-mdpi/right_small_arrow.png")}/>
-                            </TouchableHighlight>
-                        </View>
-                        <Footer ref="footer"
-                                selected={this.state.selectedPoint}
-                                index={this.state.page}/>
-
-                    </Image>
-
-                </View>
-                :
-                <View style={[styles.flex, styles.root_container]}>
-
-                    <ImageBackground source={require("../res/mipmap-mdpi/launcher_bj.png")}>
-
-                        <StatusBar
-                            ref={(statusBar) => {
-                                this.statusBar = statusBar
-                            }}
-                            callback={this.callback}
-                        />
-
-                        <View style={[styles.content_container]}>
-                            <TouchableOpacity style={styles.button}
-                                              onPress={() => this.move(-1)}
-                                              activeOpacity={0.5}>
-                                <Image style={styles.button_image}
-                                       source={require('../res/mipmap-mdpi/left_big_arrow.png')}/>
-                            </TouchableOpacity>
-
-                            <ViewPagerAndroid style={styles.view_pager}
-                                              initialPage={this.state.page}
-                                              onPageScroll={() => this.onPageScroll()}
-                                              onPageSelected={() => this.onPageSelected()}
-                                              scrollEnabled={false}
-                                              ref={(viewPager) => {
-                                                  this.viewPager = viewPager;
-                                              }}>
-                                <View>
+                                <Animated.View>
                                     <TvContent/>
-                                </View>
-                                <View>
+                                </Animated.View>
+                                <Animated.View>
                                     <VodContent navigation={navigate}
                                                 onPress={() => {
                                                     navigate('Details', {screen: 'VOD'});
                                                 }}/>
-                                </View>
-                                <View>
+                                </Animated.View>
+                                <Animated.View>
                                     <AppContent navigation={navigate}
                                                 onPress={() => navigate('Details', {screen: 'APP'})}/>
-                                </View>
+                                </Animated.View>
+
                             </ViewPagerAndroid>
+                        }
 
-                            <TouchableHighlight style={styles.button}
-                                                onPress={() => this.move(+1)}
-                                                onPressIn={() => this.onPressIn()}
-                                                onPressOut={() => this.onPressOut()}
-                                                onHideUnderlay={() => this.onHideUnderlay()}
-                                                onShowUnderlay={() => this.onShowUnderlay()}
-                                                underlayColor={"#ffffff"}>
-                                <Image style={styles.button_image}
-                                       source={this.state.focus ? require("../res/mipmap-mdpi/right_big_arrow.png") : require("../res/mipmap-mdpi/right_small_arrow.png")}/>
-                            </TouchableHighlight>
-                        </View>
-                        <Footer ref="footer"
-                                selected={this.state.selectedPoint}
-                                index={this.state.page}/>
 
-                    </ImageBackground>
+                        <TouchableHighlight style={styles.right_button}
+                                            onPress={() => this.move(+1)}
+                                            onPressIn={() => this.onPressIn()}
+                                            onPressOut={() => this.onPressOut()}
+                                            onHideUnderlay={() => this.onHideUnderlay()}
+                                            onShowUnderlay={() => this.onShowUnderlay()}
+                                            underlayColor={"#ffffff"}>
+                            <Image style={styles.button_image}
+                                   source={this.state.focus ? require("../res/mipmap-mdpi/right_big_arrow.png") : require("../res/mipmap-mdpi/right_small_arrow.png")}/>
+                        </TouchableHighlight>
+                    </View>
+                    <Footer ref="footer"
+                            selected={this.state.selectedPoint}
+                            index={this.state.page}/>
 
-                </View>
+                </ImageBackground>
+            </View>
         );
     }
 
@@ -286,11 +264,13 @@ export default class App extends Component {
         const number = stopRender - startRender;
         console.log(TAG + "componentDidMount" + "\trender time=" + number);
         let fristRender = false;
-        this.setState({fristRender: fristRender});
+
         // DeviceEventEmitter.emit('userNameDidChange', '通知来了');
+        SplashScreen.hide();
+
         setTimeout(() => {
-            SplashScreen.hide();
-        }, 1000)
+            this.setState({fristRender: fristRender});
+        }, 0);
     }
 
     componentWillReceiveProps() {
@@ -299,6 +279,8 @@ export default class App extends Component {
 
     shouldComponentUpdate() {
         console.log(TAG + "shouldComponentUpdate");
+        LayoutAnimation.configureNext(slideAnimation);
+
         if (!this.state.fristRender && this.completeRender) {
             return false;
         } else {
@@ -307,6 +289,9 @@ export default class App extends Component {
     }
 
     componentWillUpdate() {
+        // LayoutAnimation.easeInEaseOut();
+        //或者可以使用如下的自定义的动画效果
+        LayoutAnimation.configureNext(CustomLayoutAnimation);
         console.log(TAG + "componentWillUpdate");
     }
 
@@ -320,42 +305,83 @@ export default class App extends Component {
     }
 }
 
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1,
-    },
-    root_container: {
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        // backgroundColor: "#ffdce6",
-    },
+const
+    CustomLayoutAnimation = {
+        duration: 800,
+        create: {
+            type: LayoutAnimation.Types.linear,
+            property: LayoutAnimation.Properties.opacity,
+        },
+        update: {
+            type: LayoutAnimation.Types.spring,
+            property: LayoutAnimation.Properties.scaleXY,
+        },
 
-    content_container: {
-        marginVertical: 40,
-        flex: 13,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        width: screenWidth,
-        // backgroundColor: '#27ff2c'
+        // delete: {},
 
-    },
+    };
 
-    view_pager: {
-        flex: 1,
-        height: 1000,
-        // backgroundColor: '#ff0000',
-    },
+const
+    slideAnimation = {
+        duration: 3000,
+        create: {
+            type: LayoutAnimation.Types.spring,
+            property: LayoutAnimation.Properties.opacity
+        },
+        update: {
+            type: LayoutAnimation.Types.spring,
+            property: LayoutAnimation.Properties.opacity
+        },
+    };
+const
+    styles = StyleSheet.create({
+        flex: {
+            flex: 1,
+        },
+        root_container: {
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            // backgroundColor: "#ffdce6",
+        },
 
-    button: {
-        width: 100,
-        height: 800,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+        content_container: {
+            marginVertical: 40,
+            flex: 13,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: screenWidth,
+            // backgroundColor: '#27ff2c'
 
-    button_image: {
-        resizeMode: 'center',
-    },
+        },
 
-});
+        view_pager: {
+            // flex: 1,
+            width: "90%",
+            height: "98%",
+            //height: 1000,
+            // backgroundColor: '#ff0000',
+        },
+
+        left_button: {
+            position: "absolute",
+            left: 0,
+            width: 100,
+            height: 800,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+
+        right_button: {
+            position: "absolute",
+            right: 0,
+            width: 100,
+            height: 800,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        button_image: {
+            resizeMode: 'center',
+        },
+
+    });

@@ -51,9 +51,8 @@ const Item = (props) => {
             />
             <Text
                 numberOfLines={1}
-                style={styles.title}
-            >
-                {loading ? null : title}
+                style={styles.title}>
+                {loading ? "加载中..." : title}
             </Text>
             {/*{renderStars(stars)}*/}
         </TouchableOpacity>

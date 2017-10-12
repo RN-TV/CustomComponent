@@ -15,19 +15,21 @@ import {
     FlatList,
     TouchableHighlight,
     ScrollView,
+    TouchableOpacity,
 } from 'react-native';
+import Video from 'react-native-video';
 import {
     MyIntentModule,
     ToastNative,
     DataModule,
 } from './utils/NativeModules';
 import StatusBar from './StatusBar';
-import Item from './Item';
+import ItemPoster from './ItemPoster';
 import ItemClassification from './ItemClassification';
+import VideoView from './component/VideoView';
 import movies from '../assests/movies.json';
 import hot from '../assests/hot.json';
 import classification from '../assests/classification.json';
-import TouchableItem from "../node_modules/react-navigation/lib/views/TouchableItem";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const element_width = screenWidth * (90 / 100);
@@ -52,7 +54,14 @@ export default class VodContent extends Component {
         console.log(TAG + "componentWillMount");
         DataModule.getTitleUrl((msg) => {
             console.log("msg=" + msg);
-        })
+        });
+        DataModule.getCategory();
+        DataModule.getRecommendation(/*(...msg) => {
+         for (let [index, values] of msg.entries()) {
+         console.log("index=" + index + "\tvalues=" + values);
+         }
+         }*/);
+        DataModule.getTrailer();
     }
 
     componentDidMount() {
@@ -94,23 +103,36 @@ export default class VodContent extends Component {
         return (
             <View style={styles.vod_content}>
                 <View style={styles.recommend}>
+                    {/*<VideoView style={styles.preview_video}
+                        // source={{uri: 'http://cord.tvxio.com/v1_0/I2/frk/api/live/m3u8/6/536336f6-b582-4db2-a60d-ae85d0f6556b/medium/'}}
+                        //        source={require("../res/video.stagefright.mp4")}
+                        //        resizeMode="cover"
+                               ref={(video) => {
+                                   this.video = video
+                               }}/>*/}
 
-                    <TouchableHighlight style={styles.preview_video}
-                                        onPress={() => this.props.onPress()}
-                                        title="VodDetails">
-                        <Image
-                            source={require('../res/mipmap-mdpi/video_default_bg.png')}/>
-                    </TouchableHighlight>
+                    <Video
+                      style={styles.preview_video}
+                      // source={{uri: 'http://cord.tvxio.com/v1_0/I2/frk/api/live/m3u8/6/536336f6-b582-4db2-a60d-ae85d0f6556b/medium/'}}
+                      source={require("../res/video.stagefright.mp4")}
+                      resizeMode="cover"
+                      repeat={true}/>
 
-                    <TouchableHighlight onPress={() => this.props.onPress()}
-                                        title="VOD">
+                    <TouchableOpacity onPress={() =>
+                        this.navigate('AppDetails', {
+                            screen: "AppDetails",
+                        })}
+                                      title="VOD">
                         <Image style={styles.topic_image}
                                source={{uri: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1794894692,1423685501&fm=117&gp=0.jpg'}}>
                             <Text style={styles.topic_title}>暑期过把隐</Text>
                         </Image>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
 
-                    <TouchableHighlight onPress={() => this.props.onPress()}
+                    <TouchableHighlight onPress={() =>
+                        this.navigate('AppDetails', {
+                            screen: "AppDetails",
+                        })}
                                         title="VOD">
                         <Image style={styles.topic_image}
                                source={{uri: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1794894692,1423685501&fm=117&gp=0.jpg'}}>
@@ -122,13 +144,14 @@ export default class VodContent extends Component {
 
                 <View style={styles.list}>
                     <FlatList style={{flex: 1}}
+                              initialNumToRender={6}
                               showsHorizontalScrollIndicator={false}
                               horizontal={true}
                               keyExtractor={item => item.key}
                               data={hot.hotlist}
                               renderItem={({item}) => {
-                                  return (<Item image={item.img}
-                                                onPress={() => this.props.onPress()}/>);
+                                  return (<ItemPoster image={item.img}
+                                                      onPress={() => this.props.onPress()}/>);
                               }
 
                               }
@@ -160,7 +183,7 @@ export default class VodContent extends Component {
                                               })}/>);
                                   }
                                   }
-                                  initialNumToRender={5}
+                                  initialNumToRender={7}
                                   getItemLayout={(data, index) => (
                                       {length: ITEM_HEIGHT, offset: (ITEM_HEIGHT + 2) * index, index}
                                   ) }
@@ -190,18 +213,18 @@ const styles = StyleSheet.create({
         width: element_width,
         height: recommend_height,
         flexDirection: 'row',
-        backgroundColor: '#2f25ff',
+        // backgroundColor: '#2f25ff',
     },
 
     preview_video: {
-        marginHorizontal: 40,
+        // marginHorizontal: 40,
         width: 920,
         height: 400,
-        backgroundColor: "#a0ff23",
     },
     topic_image: {
-        marginHorizontal: 40,
-        width: 420,
+        marginLeft: 20,
+        marginHorizontal: 20,
+        width: 360,
         height: 400,
         justifyContent: 'flex-end',
         alignItems: 'center',
@@ -215,7 +238,7 @@ const styles = StyleSheet.create({
 
     list: {
         height: list_height,
-        backgroundColor: "#ff1a9e",
+        // backgroundColor: "#ff1a9e",
         width: element_width,
         // flexDirection: 'row',
         // justifyContent: 'space-around'
@@ -240,7 +263,6 @@ const styles = StyleSheet.create({
         height: 80,
         width: 1500,
         backgroundColor: '#fffc89',
-
     },
     category_icon: {
         width: 100,

@@ -19,6 +19,7 @@ import {
     ToolbarAndroid,
     ImageBackground,
     ActivityIndicator,
+    AppRegistry,
 } from 'react-native';
 
 import ItemVodDetails from "./ItemVodDetails";
@@ -27,11 +28,11 @@ import movies from "../assests/movies.json";
 
 const api = 'https://api.douban.com/v2/movie/in_theaters';
 
-export default class VodDetails extends Component {
+export default class Details extends Component {
 
-    static navigationOptions = ({navigation}) => ({
-        title: `${navigation.state.params.screen}`,
-    });
+    // static navigationOptions = ({navigation}) => ({
+    //     title: `${navigation.state.params.screen}`,
+    // });
 
     constructor(props) {
         super(props);
@@ -42,7 +43,7 @@ export default class VodDetails extends Component {
     //     header: null,
     // };
 
-    params = this.props.navigation.state.params;
+    // params = this.props.navigation.state.params;
 
     state = {
         movies: movies.subjects,
@@ -109,13 +110,13 @@ export default class VodDetails extends Component {
     async componentDidMount() {
         await this.fetchMore();
         this.setState({
-            loading: false,
+            // loading: false,
         });
     }
 
     render() {
         // The screen's current route is passed in to `props.navigation.state`:
-        const {params} = this.props.navigation.state;
+        // const {params} = this.props.navigation.state;
         const {movies, refreshing, loading} = this.state;
         return (
             <ImageBackground style={styles.rootContainer}
@@ -130,10 +131,9 @@ export default class VodDetails extends Component {
                 <View style={{height: 5, width: 1920, backgroundColor: "#ffffff"}}/>
 
                 <View style={styles.content}>
-                    {!loading ?
                         <FlatList
                             // style={styles.row}
-                            initialNumToRender={12}
+                            initialNumToRender={16}
                             showsVerticalScrollIndicator={false}
                             numColumns={4}
                             keyExtractor={item => item.id}
@@ -152,7 +152,7 @@ export default class VodDetails extends Component {
                                     <ItemVodDetails
                                         title={item.title}
                                         image={item.images.medium}
-                                        loading={false}
+                                        loading={loading}
                                         onPress={() => navigate('Detail', {
                                             id: item.id,
                                             callback: (data) => {
@@ -165,39 +165,6 @@ export default class VodDetails extends Component {
                             }
                             }
                         />
-                        :
-                        <FlatList
-                            // style={styles.row}
-                            initialNumToRender={12}
-                            showsVerticalScrollIndicator={false}
-                            numColumns={4}
-                            keyExtractor={item => item.id}
-                            data={movies}
-                            // onRefresh={this.freshData}
-                            // onEndReached={this.fetchMore}
-                            // onEndReachedThreshold={0}
-                            // refreshing={refreshing}
-                            // ListFooterComponent={() => {
-                            //     return refreshing &&
-                            //         <ActivityIndicator size="large"/>
-                            // }}
-                            renderItem={({item}) => {
-
-                                return (
-                                    <ItemVodDetails
-                                        title={item.title}
-                                        image={item.images.medium}
-                                        loading={true}
-                                        onPress={() => {
-                                            console.log("暂无数据");
-                                        }
-                                        }
-                                    />)
-                            }
-                            }>
-                            <ActivityIndicator size="large" style={styles.loading}/>
-                        </FlatList>
-                    }
                 </View>
 
             </ImageBackground>
@@ -226,3 +193,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 });
+
+AppRegistry.registerComponent('RN', () => Details);

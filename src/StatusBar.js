@@ -9,6 +9,7 @@ import {
     View,
     Navigator,
     ToastAndroid,
+    Modal,
     Text,
     Image,
     Dimensions,
@@ -31,7 +32,7 @@ export default class StatusBar extends Component {
         super(props);
     }
 
-     state = {
+    state = {
         date: new Date().toLocaleTimeString(),
         isConnected: null,
         connectionInfo: null,
@@ -118,6 +119,7 @@ export default class StatusBar extends Component {
                     </View>
                 </View>
             </View>
+
 
         );
     }

@@ -29,7 +29,7 @@ public class MyIntentModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void startActivityForResult(String activityName, int requestCode) {
+    public void startActivityForName(String activityName, int requestCode) {
         try {
             Activity currentActivity = getCurrentActivity();
             if (null != currentActivity) {

@@ -60,7 +60,16 @@ export default class VodList extends Component {
     count = 16;
     urlList = [];
 
+    isEmpty(variable="") {
+        if (variable == null || variable == undefined || variable == "") {
+            return true;
+        }
+    }
+
     fetchBaseUrl = () => {
+        if(this.isEmpty(this.params.url)){
+            return;
+        }
         return fetch(`${this.params.url}`)
             .then((response) => {
                 let text = response.text();
@@ -81,6 +90,9 @@ export default class VodList extends Component {
 
     fetchData = async () => {
         const baseUrl = await this.fetchBaseUrl();
+        if(this.isEmpty(baseUrl)){
+            return;
+        }
         this.urlList = baseUrl;
         console.log("baseUrl=" + this.urlList[0].url);
 
@@ -120,6 +132,9 @@ export default class VodList extends Component {
     };
     fetchMore = async () => {
         const json = await this.fetchData(this.start, this.count);
+        if(this.isEmpty(json)){
+            return;
+        }
         /*if (json) {
          this.start += this.count - 1;
          this.setState({

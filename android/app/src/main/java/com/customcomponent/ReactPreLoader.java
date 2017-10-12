@@ -5,7 +5,6 @@ package com.customcomponent;
  */
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.MutableContextWrapper;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
@@ -55,19 +54,6 @@ public class ReactPreLoader {
         CACHE_VIEW_MAP.put(reactInfo.getMainComponentName(), rootView);
     }
 
-    public static void init(Application application,ReactInfo reactInfo){
-        sReactInfo = reactInfo;
-        if (CACHE_VIEW_MAP.get(reactInfo.getMainComponentName()) != null) {
-            return;
-        }
-        ReactRootView rootView = new ReactRootView(new MutableContextWrapper(application.getBaseContext()));
-        rootView.startReactApplication(
-                ((ReactApplication) application).getReactNativeHost().getReactInstanceManager(),
-                reactInfo.getMainComponentName(),
-                reactInfo.getLaunchOptions());
-        CACHE_VIEW_MAP.put(reactInfo.getMainComponentName(), rootView);
-    }
-
     /**
      * Remove {@link ReactRootView} from parent.
      */
@@ -83,8 +69,7 @@ public class ReactPreLoader {
         }
     }
 
-    public static ReactInfo getRecatInfo() {
+    public static ReactInfo getReactInfo() {
         return sReactInfo;
     }
-
 }

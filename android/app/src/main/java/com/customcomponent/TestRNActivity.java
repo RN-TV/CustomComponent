@@ -1,38 +1,45 @@
 package com.customcomponent;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class TestRNActivity extends AppCompatActivity {
+public class TestRNActivity extends MrReactActivity {
+    private static final String TAG = TestRNActivity.class.toString();
+
+
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_test_rn);
+//        final TextView textView = (TextView) findViewById(R.id.textView);
+//        textView.setOnHoverListener(new View.OnHoverListener() {
+//            @Override
+//            public boolean onHover(View v, MotionEvent event) {
+//                textView.setBackgroundColor(Color.RED);
+//                return false;
+//            }
+//        });
+//
+//    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_rn);
-        final TextView textView = (TextView) findViewById(R.id.textView);
-        textView.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                textView.setBackgroundColor(Color.RED);
-                return false;
-            }
-        });
+    protected String getMainComponentName() {
+        return ReactPreLoader.getReactInfo().getMainComponentName();
+    }
 
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-
-                intent.setComponent(new ComponentName("com.lenovo.userspace", "com.lenovo.userspace.WelcomeActivity"));
-                startActivity(intent);
-
-            }
-        });
+    @Override
+    public ReactInfo getReactInfo() {
+        return ReactPreLoader.getReactInfo();
     }
 }
